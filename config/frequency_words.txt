@@ -1,104 +1,152 @@
 明日方舟
+Arknights
 鹰角网络
-
+Hypergryph
 二重螺旋
 
-B站
-
-游戏
-Steam
-生化危机
-卡普空
-
-腾讯
-
-网易
-
 米哈游
+miHoYo
+HoYoverse
+崩坏
+星穹铁道
+原神
 绝区零
+Zenless Zone Zero
+ZZZ
 
-华为
-鸿蒙
-HarmonyOS
-任正非
+Steam
+单机游戏
+indie game
+卡普空
+生化危机
+Resident Evil
+Capcom
+FromSoftware
+只狼
+艾尔登法环
+黑暗之魂
+任天堂
+Nintendo
+Switch
 
-三体
-流浪地球
-刘慈欣
-郭帆
+B站
+哔哩哔哩
+Bilibili
 
-京东
-刘强东
+小红书
 
-字节
-bytedance
-张一鸣
+前端开发
+Web前端
+前端工程化
+JavaScript
+JS
+TypeScript
+TS
+Node.js
+Vue
+Vue3
+React
+Vite
+Webpack
+Tailwind
+前端性能优化
+WebAssembly
+WASM
+Three.js
 
-特斯拉
-马斯克
+后端开发
+Python
+Golang
+Rust
+Docker
+Kubernetes
+k8s
+微服务
+Serverless
+云原生
+
+人工智能
+AI
+大模型
+LLM
+RAG
+Agent
+AI 工程化
+AI 编程
+AI 生成
+AIGC
+自动驾驶
+机器人
+
+OpenAI
+ChatGPT
+Sora
+GPT
+Sam Altman
+
+Anthropic
+Claude
+
+Google
+谷歌
+DeepMind
+Gemini
+Sundar Pichai
 
 微软
 Microsoft
+Copilot
+Azure AI
 
 英伟达
 NVIDIA
 黄仁勋
-
+CUDA
+H100
+RTX
 AMD
+Ryzen
 
-谷歌
-google
-gemini
-deepmind
+华为
+HarmonyOS
+鸿蒙
+任正非
 
-chatgpt
-openai
-sora
+腾讯
+网易
+字节
+Bytedance
+张一鸣
 
-claude
-Anthropic
+京东
+刘强东
 
-前端开发
-后端开发
-javascript
-typescript
-python
+特斯拉
+Tesla
+马斯克
+Elon Musk
 
-iphone
-ipad
-mac
-ios
-
-ai
-!gai
-人工智能
-
-自动驾驶
-
-机器人
-
-国产
-中国
-
-美国
-日本
-韩国
+日漫
+动漫
+日本动画
+Jump
+新番
 
 芯片
 光刻机
-
-科技
-
+核聚变
 核能
-
-水电站
-雅鲁藏布江
-
-新质生产力
-
-月球
+航天
+火箭
 登月
+月球
 火星
 宇宙
-飞船
-航空
+航空航天
+中国航天
+SpaceX
+
+美国
+中国
+日本
+韩国
