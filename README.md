@@ -1,5 +1,7 @@
 <div align="center" id="trendradar">
 
+> **📢 公告：** **v4.0.0** 版本已发布！包含存储架构重构、数据库优化、模块化改进等重大更新
+
 <a href="https://github.com/sansan0/TrendRadar" title="TrendRadar">
   <img src="/_image/banner.webp" alt="TrendRadar Banner" width="80%">
 </a>
@@ -14,8 +16,8 @@
 [![GitHub Stars](https://img.shields.io/github/stars/sansan0/TrendRadar?style=flat-square&logo=github&color=yellow)](https://github.com/sansan0/TrendRadar/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/sansan0/TrendRadar?style=flat-square&logo=github&color=blue)](https://github.com/sansan0/TrendRadar/network/members)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/version-v3.4.0-blue.svg)](https://github.com/sansan0/TrendRadar)
-[![MCP](https://img.shields.io/badge/MCP-v1.0.3-green.svg)](https://github.com/sansan0/TrendRadar)
+[![Version](https://img.shields.io/badge/version-v4.0.0-blue.svg)](https://github.com/sansan0/TrendRadar)
+[![MCP](https://img.shields.io/badge/MCP-v1.1.0-green.svg)](https://github.com/sansan0/TrendRadar)
 
 [![企业微信通知](https://img.shields.io/badge/企业微信-通知-00D4AA?style=flat-square)](https://work.weixin.qq.com/)
 [![个人微信通知](https://img.shields.io/badge/个人微信-通知-00D4AA?style=flat-square)](https://weixin.qq.com/)
@@ -43,21 +45,64 @@
 
 > 本项目以轻量，易部署为目标
 
-<details>
-<summary>⚠️ 点击展开：<strong>查看最新文档</strong>（Fork 用户必读）</summary>
 <br>
 
-最近有很多第一次接触 GitHub 的新用户使用本项目，因此特别补充这个说明。
+<details>
+<summary>🚨 <strong>【必读】重要公告：v4.0.0 部署方式与存储架构变更</strong></summary>
 
-**问题**：如果你是通过 **Fork** 使用本项目，你看到的可能是旧版文档。
+<br>
 
-**原因**：Fork 时会复制当时的文档版本，但原项目可能已更新。
+### 🛠️ 请选择适合你的部署方式
 
-**👉 [点击查看最新官方文档](https://github.com/sansan0/TrendRadar?tab=readme-ov-file)**
+#### 🅰️ 方案一：Docker 部署（推荐 🔥）
 
-**如何判断？** 看页面顶部的仓库地址：
-- `github.com/你的用户名/TrendRadar` ← 你 fork 的版本
-- `github.com/sansan0/TrendRadar` ← 最新官方版本
+* **特点**：最稳定、最简单，数据存储在 **本地 SQLite**，完全自主可控。
+
+* **适用**：有自己的服务器、NAS 或长期运行的电脑。
+
+* 👉 [跳转到 Docker 部署教程](#6-docker-部署)
+
+---
+
+#### 🅱️ 方案二：GitHub Actions 部署（已恢复 ✅）
+
+* **特点**：数据不再直接写入仓库（Git Commit），而是存储在 **远程云存储**（支持 S3 兼容协议：Cloudflare R2、阿里云 OSS、腾讯云 COS 等）。
+
+* **门槛**：**必须**配置一个 S3 兼容的对象存储服务（推荐免费的 Cloudflare R2）。
+
+> **⚠️ 注意**：选择此方案，请务必执行以下两步配置：
+
+#### 1. 🚀 推荐的开始方式：Use this template
+
+为了保持仓库整洁，避免继承冗余的历史记录，我**建议**你使用 Template 模式：
+
+1.  **点击**原仓库页面右上角的绿色 **[Use this template]** 按钮。
+
+2.  **选择** "Create a new repository"。
+
+> **💡 为什么要这样做？**
+> * **Use this template**：创建一个全新的、干净的仓库，没有历史包袱。
+> * **Fork**：会保留完整的提交历史和关联关系，占用 GitHub 更多资源。
+
+#### 2. ☁️ 关于 GitHub Actions 必配的远程存储
+
+如果你选择 **方案二 (GitHub Actions)**，则必须配置一个 S3 兼容的对象存储服务。
+
+**支持的存储服务：**
+- **Cloudflare R2**（推荐，免费额度充足）
+- 其他 S3 兼容服务
+
+**⚠️ 以 Cloudflare R2 为例的配置前置条件：**
+
+根据 Cloudflare 平台规则，开通 R2 需绑定支付方式。
+
+* **目的**：仅作身份验证（Verify Only），**不产生扣费**。
+
+* **支付**：支持双币信用卡或国区 PayPal。
+
+* **用量**：R2 的免费额度（10GB存储/月）足以覆盖本项目日常运行，无需担心付费。
+
+👉 **[点击查看详细配置教程](#-快速开始)**
 
 </details>
 
@@ -222,23 +267,25 @@
 >
 > 详细对比和配置教程见 [配置详解 - 推送模式详解](#3-推送模式详解)
 
-**附加功能 - 推送时间窗口控制**（可选）：
+**附加功能**（可选）：
 
-- 设定推送时间范围（如 09:00-18:00），只在指定时间内推送
-- 可配置窗口内多次推送或每天仅推送一次
-- 避免非工作时间打扰
+| 功能 | 说明 | 默认 |
+|------|------|------|
+| **推送时间窗口控制** | 设定推送时间范围（如 09:00-18:00），避免非工作时间打扰 | 关闭 |
+| **内容顺序配置** | 调整"热点词汇统计"和"新增热点新闻"的显示顺序（v3.5.0 新增） | 统计在前 |
 
-> 💡 此功能默认关闭，配置方法见 [快速开始](#-快速开始)
+> 💡 详细配置教程见 [配置详解 - 报告配置](#7-报告配置) 和 [配置详解 - 推送时间窗口](#8-推送时间窗口配置)
 
 ### **精准内容筛选**
 
 设置个人关键词（如：AI、比亚迪、教育政策），只推送相关热点，过滤无关信息
 
-**基础语法**（4种）：
+**基础语法**（5种）：
 - 普通词：基础匹配
 - 必须词 `+`：限定范围
 - 过滤词 `!`：排除干扰
 - 数量限制 `@`：控制显示数量（v3.2.0 新增）
+- 全局过滤 `[GLOBAL_FILTER]`：全局排除指定内容（v3.5.0 新增）
 
 **高级功能**（v3.2.0 新增）：
 - 🔢 **关键词排序控制**：按热度优先 or 配置顺序优先
@@ -279,10 +326,38 @@
 
 支持**企业微信**(+ 微信推送方案)、**飞书**、**钉钉**、**Telegram**、**邮件**、**ntfy**、**Bark**、**Slack**，消息直达手机和邮箱
 
-### **多端适配**
-- **GitHub Pages**：自动生成精美网页报告，PC/移动端适配
-- **Docker部署**：支持多架构容器化运行
-- **数据持久化**：HTML/TXT多格式历史记录保存
+**📌 多账号推送说明（v3.5.0 新增）：**
+
+- ✅ **支持多账号配置**：所有推送渠道（飞书、钉钉、企业微信、Telegram、ntfy、Bark、Slack）均支持配置多个账号
+- ✅ **配置方式**：使用英文分号 `;` 分隔多个账号值
+- ✅ **示例**：`FEISHU_WEBHOOK_URL` 的 Secret 值填写 `https://webhook1;https://webhook2`
+- ⚠️ **配对配置**：Telegram 和 ntfy 需要保证配对参数数量一致（如 token 和 chat_id 都是 2 个）
+- ⚠️ **数量限制**：默认每个渠道最多 3 个账号，超出会被截断
+
+### **灵活存储架构**（v4.0.0 重大更新）
+
+**多存储后端支持**：
+- ☁️ **远程云存储**：GitHub Actions 环境默认，支持 S3 兼容协议（R2/OSS/COS 等），数据存储在云端，不污染仓库
+- 💾 **本地 SQLite 数据库**：Docker/本地环境默认，数据完全可控
+- 🔄 **自动后端选择**：根据运行环境智能切换存储方式
+
+**数据格式**：
+| 格式 | 用途 | 说明 |
+|------|------|------|
+| **SQLite** | 主存储 | 单文件数据库，查询快速，支持 MCP AI 分析 |
+| **TXT** | 可选快照 | 可读文本格式，方便直接查看 |
+| **HTML** | 报告展示 | 精美可视化页面，PC/移动端适配 |
+
+**数据管理**：
+- ✅ 自动清理过期数据（可配置保留天数）
+- ✅ 时区配置支持（全球时区）
+
+> 💡 详细说明见 [配置详解 - 存储配置](#9-存储配置)
+
+### **多端部署**
+- **GitHub Actions**：定时自动爬取 + 远程云存储（需签到续期）
+- **Docker 部署**：支持多架构容器化运行，数据本地存储
+- **本地运行**：Windows/Mac/Linux 直接运行
 
 
 ### **AI 智能分析（v3.0.0 新增）**
@@ -333,8 +408,87 @@ GitHub 一键 Fork 即可使用，无需编程基础。
 >**升级说明**：
 - **📌 查看最新更新**：**[原仓库更新日志](https://github.com/sansan0/TrendRadar?tab=readme-ov-file#-更新日志)**
 - **提示**：不要通过 **Sync fork** 更新本项目，建议查看【历史更新】，明确具体的【升级方式】和【功能内容】
-- **小版本更新**：从 v2.x 升级到 v2.y，用本项目的 `main.py` 代码替换你 fork 仓库中的对应文件
 - **大版本升级**：从 v1.x 升级到 v2.y，建议删除现有 fork 后重新 fork，这样更省力且避免配置冲突
+
+
+### 2025/12/13 - v4.0.0
+
+**🎉 重大更新：全面重构存储和核心架构**
+
+- **多存储后端支持**：引入全新的存储模块，支持本地 SQLite 和远程云存储（S3 兼容协议，推荐免费的 Cloudflare R2），适应 GitHub Actions、Docker 和本地环境。
+- **数据库结构优化**：重构 SQLite 数据库表结构，提升数据效率和查询能力。
+- **核心代码模块化**：将主程序逻辑拆分为 trendradar 包的多个模块，显著提升代码可维护性。
+- **增强功能**：实现日期格式标准化、数据保留策略、时区配置支持、时间显示优化，并修复远程存储数据持久化问题，确保数据合并的准确性。
+- **清理和兼容**：移除了大部分历史兼容代码，统一了数据存储和读取方式。
+
+
+### 2025/12/13 - mcp-v1.1.0
+
+  **MCP 模块更新:**
+  - 适配 v4.0.0，同时也兼容 v3.x 的数据
+  - 新增存储同步工具：
+    - `sync_from_remote`: 从远程存储拉取数据到本地
+    - `get_storage_status`: 获取存储配置和状态
+    - `list_available_dates`: 列出本地/远程可用日期范围
+
+
+<details>
+<summary>👉 点击展开：<strong>历史更新</strong></summary>
+
+
+### 2025/12/03 - v3.5.0
+
+**🎉 核心功能增强**
+
+1. **多账号推送支持**
+   - 所有推送渠道（飞书、钉钉、企业微信、Telegram、ntfy、Bark、Slack）支持多账号配置
+   - 使用分号 `;` 分隔多个账号，例如：`FEISHU_WEBHOOK_URL=url1;url2`
+   - 自动验证配对配置（如 Telegram 的 token 和 chat_id）数量一致性
+
+2. **推送内容顺序可配置**
+   - 新增 `reverse_content_order` 配置项
+   - 支持自定义热点词汇统计与新增热点新闻的显示顺序
+
+3. **全局过滤关键词**
+   - 新增 `[GLOBAL_FILTER]` 区域标记，支持全局过滤不想看到的内容
+   - 适用场景：过滤广告、营销、低质内容等
+
+**🐳 Docker 双路径 HTML 生成优化**
+
+- **问题修复**：解决 Docker 环境下 `index.html` 无法同步到宿主机的问题
+- **双路径生成**：当日汇总 HTML 同时生成到两个位置
+  - `index.html`（项目根目录）：供 GitHub Pages 访问
+  - `output/index.html`：通过 Docker Volume 挂载，宿主机可直接访问
+- **兼容性**：确保 Docker、GitHub Actions、本地运行环境均能正常访问网页版报告
+
+**🐳 Docker MCP 镜像支持**
+
+- 新增独立的 MCP 服务镜像 `wantcat/trendradar-mcp`
+- 支持 Docker 部署 AI 分析功能，通过 HTTP 接口（端口 3333）提供服务
+- 双容器架构：新闻推送服务与 MCP 服务独立运行，可分别扩展和重启
+- 详见 [Docker 部署 - MCP 服务](#6-docker-部署)
+
+**🌐 Web 服务器支持**
+
+- 新增内置 Web 服务器，支持通过浏览器访问生成的报告
+- 通过 `manage.py` 命令控制启动/停止：`docker exec -it trend-radar python manage.py start_webserver`
+- 访问地址：`http://localhost:8080`（端口可配置）
+- 安全特性：静态文件服务、目录限制、本地访问
+- 支持自动启动和手动控制两种模式
+
+**📖 文档优化**
+
+- 新增 [报告配置](#7-报告配置) 章节：report 相关参数详解
+- 新增 [推送时间窗口配置](#8-推送时间窗口配置) 章节：push_window 配置教程
+- 新增 [执行频率配置](#9-执行频率配置) 章节：Cron 表达式说明和常用示例
+- 新增 [多账号推送配置](#10-多账号推送配置) 章节：多账号推送配置详解
+- 优化各配置章节：统一添加"配置位置"说明
+- 简化快速开始配置说明：三个核心文件一目了然
+- 优化 [Docker 部署](#6-docker-部署) 章节：新增镜像说明、推荐 git clone 部署、重组部署方式
+
+**🔧 升级说明**：
+- **GitHub Fork 用户**：更新 `main.py`、`config/config.yaml`（新增多账号推送支持，无需修改现有配置）
+- **多账号推送**：新功能，默认不启用，现有单账号配置不受影响
 
 
 ### 2025/11/26 - mcp-v1.0.3
@@ -343,6 +497,29 @@ GitHub 一键 Fork 即可使用，无需编程基础。
   - 新增日期解析工具 resolve_date_range,解决 AI 模型计算日期不一致的问题
   - 支持自然语言日期表达式解析(本周、最近7天、上月等)
   - 工具总数从 13 个增加到 14 个
+
+
+### 2025/11/28 - v3.4.1
+
+**🔧 格式优化**
+
+1. **Bark 推送增强**
+   - Bark 现支持 Markdown 渲染
+   - 启用原生 Markdown 格式：粗体、链接、列表、代码块等
+   - 移除纯文本转换，充分利用 Bark 原生渲染能力
+
+2. **Slack 格式精准化**
+   - 使用专用 mrkdwn 格式处理分批内容
+   - 提升字节大小估算准确性（避免消息超限）
+   - 优化链接格式：`<url|text>` 和加粗语法：`*text*`
+
+3. **性能提升**
+   - 格式转换在分批过程中完成，避免二次处理
+   - 准确估算消息大小，减少发送失败率
+
+**🔧 升级说明**：
+- **GitHub Fork 用户**：更新 `main.py`，`config.yaml`
+
 
 ### 2025/11/25 - v3.4.0
 
@@ -365,10 +542,6 @@ GitHub 一键 Fork 即可使用，无需编程基础。
 
 **🔧 升级说明**：
 - **GitHub Fork 用户**：更新 `main.py`、`config/config.yaml`、`.github/workflows/crawler.yml`
-
-
-<details>
-<summary>👉 点击展开：<strong>历史更新</strong></summary>
 
 
 ### 2025/11/24 - v3.3.0
@@ -433,7 +606,7 @@ GitHub 一键 Fork 即可使用，无需编程基础。
 
 - **新增个人微信推送支持**：企业微信应用可推送到个人微信，无需安装企业微信 APP
 - 支持两种消息格式：`markdown`（企业微信群机器人）和 `text`（个人微信应用）
-- 新增 `WEWORK_MSG_TYPE` 环境变量配置，支持 GitHub Actions、Docker、docker-compose 等多种部署方式
+- 新增 `WEWORK_MSG_TYPE` 环境变量配置，支持 GitHub Actions、Docker、docker compose 等多种部署方式
 - `text` 模式自动清除 Markdown 语法，提供纯文本推送效果
 - 详见快速开始中的「个人微信推送」配置说明
 
@@ -723,11 +896,44 @@ frequency_words.txt 文件增加了一个【必须词】功能，使用 + 号
 
 > **📖 提醒**：Fork 用户建议先 **[查看最新官方文档](https://github.com/sansan0/TrendRadar?tab=readme-ov-file)**，确保配置步骤是最新的。
 
+### ⚠️ GitHub Actions 使用说明
+
+**v4.0.0 重要变更**：引入「活跃度检测」机制，GitHub Actions 需定期签到以维持运行。
+
+#### 🔄 签到续期机制
+
+- **运行周期**：有效期为 **7 天**，倒计时结束后服务将自动挂起。
+- **续期方式**：在 Actions 页面手动触发 "Check In" workflow，即可重置 7 天有效期。
+- **操作路径**：`Actions` → `Check In` → `Run workflow`
+- **设计理念**：
+    - 如果 7 天都忘了签到，或许这些资讯对你来说并非刚需。适时的暂停，能帮你从信息流中抽离，给大脑留出喘息的空间。
+    - GitHub Actions 是宝贵的公共计算资源。引入签到机制旨在避免算力的无效空转，确保资源能分配给真正活跃且需要的用户。感谢你的理解与支持。
+
+#### 📦 数据存储（必需配置）
+
+GitHub Actions 环境下，数据存储在 **远程云存储**（支持 S3 兼容协议，推荐免费的 Cloudflare R2），不会污染仓库（见下方 **必需配置：远程云存储**）
+
+#### 🚀 推荐：Docker 部署
+
+如需长期稳定运行，建议使用 [Docker 部署](#6-docker-部署)，数据存储在本地，无需签到，不过需要额外付费购买云服务器。
+
+<br>
+
+> 🎉 **已支持：多云存储方案**
+>
+> 本项目现已支持 S3 兼容协议，你可以选择：
+> - **Cloudflare R2**（推荐，免费额度充足）
+> - 其他 S3 兼容存储服务
+>
+> 只需配置对应的 `S3_ENDPOINT_URL`、`S3_BUCKET_NAME` 等环境变量即可切换。
+
+---
+
 1. **Fork 本项目**到你的 GitHub 账户
 
    - 点击本页面右上角的"Fork"按钮
 
-2. **设置 GitHub Secrets（选择你需要的平台）**:
+2. **设置 GitHub Secrets（必需 + 可选平台）**:
 
    在你 Fork 后的仓库中，进入 `Settings` > `Secrets and variables` > `Actions` > `New repository secret`
 
@@ -737,6 +943,24 @@ frequency_words.txt 文件增加了一个【必须词】功能，使用 + 号
    - ✅ **保存后看不到值是正常的**：出于安全考虑，保存后重新编辑时，只能看到 Name（名称），看不到 Secret（值）的内容
    - ⚠️ **严禁自创名称**：Secret 的 Name（名称）必须**严格使用**下方列出的名称（如 `WEWORK_WEBHOOK_URL`、`FEISHU_WEBHOOK_URL` 等），不能自己随意修改或创造新名称，否则系统无法识别
    - 💡 **可以同时配置多个平台**：系统会向所有配置的平台发送通知
+
+   **📌 多账号推送说明（v3.5.0 新增）：**
+
+   - ✅ **支持多账号配置**：所有推送渠道（飞书、钉钉、企业微信、Telegram、ntfy、Bark、Slack）均支持配置多个账号
+   - ✅ **配置方式**：使用英文分号 `;` 分隔多个账号值
+   - ✅ **示例**：`FEISHU_WEBHOOK_URL` 的 Secret 值填写 `https://webhook1;https://webhook2`
+   - ⚠️ **配对配置**：Telegram 和 ntfy 需要保证配对参数数量一致（如 token 和 chat_id 都是 2 个）
+   - ⚠️ **数量限制**：默认每个渠道最多 3 个账号，超出部分被截断
+
+   **多账号配置示例**：
+
+   | Name（名称） | Secret（值）示例 |
+   |-------------|-----------------|
+   | `FEISHU_WEBHOOK_URL` | `https://webhook1;https://webhook2;https://webhook3` |
+   | `TELEGRAM_BOT_TOKEN` | `token1;token2` |
+   | `TELEGRAM_CHAT_ID` | `chatid1;chatid2` |
+   | `NTFY_TOPIC` | `topic1;topic2` |
+   | `NTFY_TOKEN` | `;token2`（第一个无 token 时留空占位） |
 
    **配置示例：**
 
@@ -748,6 +972,53 @@ frequency_words.txt 文件增加了一个【必须词】功能，使用 + 号
 
    <br>
 
+   <details>
+   <summary>⚠️ <strong>必需配置：远程云存储</strong>（GitHub Actions 环境必需，推荐 Cloudflare R2）</summary>
+   <br>
+
+    **GitHub Secret 配置（⚠️ 以下 4 个配置项都是必需的）：**
+
+    | Name（名称） | Secret（值）说明 |
+    |-------------|-----------------|
+    | `S3_BUCKET_NAME` | 存储桶名称（如 `trendradar-data`） |
+    | `S3_ACCESS_KEY_ID` | 访问密钥 ID（Access Key ID） |
+    | `S3_SECRET_ACCESS_KEY` | 访问密钥（Secret Access Key） |
+    | `S3_ENDPOINT_URL` | S3 API 端点（如 R2：`https://<account-id>.r2.cloudflarestorage.com`） |
+
+    <br>
+
+    **如何获取凭据（以 Cloudflare R2 为例）：**
+
+    1. **进入 R2 概览**：
+    - 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)。
+    - 在左侧侧边栏找到并点击 `R2对象存储`。
+
+    <br>
+
+    2. **创建存储桶**：
+    - 点击`概述`
+    - 点击右上角的 `创建存储桶` (Create bucket)。
+    - 输入名称（例如 `trendradar-data`），点击 `创建存储桶`。
+
+    <br>
+
+    3. **创建 API 令牌**：
+    - 回到 **概述**页面。
+    - 点击**右下角** `Account Details `找到并点击 `Manage` (Manage R2 API Tokens)。
+    - 同时你会看到 `S3 API`：`https://<account-id>.r2.cloudflarestorage.com`(这就是 S3_ENDPOINT_URL)
+    - 点击 `创建 Account APl 令牌` 。
+    - **⚠️ 关键设置**：
+        - **令牌名称**：随意填写（如 `github-action-write`）。
+        - **权限**：选择 `管理员读和写` 。
+        - **指定存储桶**：为了安全，建议选择 `仅适用于指定存储桶` 并选中你的桶（如 `trendradar-data`）。
+    - 点击 `创建 API 令牌`，**立即复制** 显示的 `Access Key ID` 和 `Secret Access Key`（只显示一次！）。
+
+    <br>
+
+    - **R2 免费额度**：每月 10GB 存储 + 100万次读取，对本项目来说非常充足。
+    - **支付验证**：开通 R2 即使是免费额度，Cloudflare 也要求绑定 PayPal 或信用卡进行身份验证（不会实际扣费，除非超过额度）。
+
+   </details>
 
    <details>
    <summary>👉 点击展开：<strong>企业微信机器人</strong>（配置最简单最迅速）</summary>
@@ -964,7 +1235,16 @@ frequency_words.txt 文件增加了一个【必须词】功能，使用 + 号
    <br>
 
    - 注意事项：为防止邮件群发功能被**滥用**，当前的群发是所有收件人都能看到彼此的邮箱地址。
-   - 如果你没有过配置下面这种邮箱发送的经历，不建议尝试 
+   - 如果你没有过配置下面这种邮箱发送的经历，不建议尝试
+
+   > ⚠️ **重要配置依赖**：邮件推送需要 HTML 报告文件。请确保 `config/config.yaml` 中的 `formats.html` 设置为 `true`：
+   > ```yaml
+   > formats:
+   >   sqlite: true
+   >   txt: false
+   >   html: true   # 必须启用，否则邮件推送会失败
+   > ```
+   > 如果设置为 `false`，邮件推送时会报错：`错误：HTML文件不存在或未提供: None`
 
    <br>
 
@@ -1337,20 +1617,27 @@ frequency_words.txt 文件增加了一个【必须词】功能，使用 + 号
 
    **测试步骤**：
    1. 进入你项目的 Actions 页面
-   2. 找到 **"Hot News Crawler"** 点进去
+   2. 找到 **"Get Hot News"**(必须得是这个字)点进去，点击右侧的 **"Run workflow"** 按钮运行 
       - 如果看不到该字样，参照 [#109](https://github.com/sansan0/TrendRadar/issues/109) 解决
-   3. 点击右侧的 **"Run workflow"** 按钮运行
-   4. 等待 1 分钟左右，消息会推送到你配置的平台
+   3. 3 分钟左右，消息会推送到你配置的平台
+
+   <br>
+
+   > ⏱️ **测试提示**：
+   > - 手动测试不要太频繁，避免触发 GitHub Actions 限制
+   > - 点击 Run workflow 后需要**刷新浏览器页面**才能看到新的运行记录
 
 4. **配置说明（可选）**：
 
-    > 💡 默认配置已可正常使用，如需个性化调整，可参考以下选项
+    > 💡 **默认配置已可正常使用**，如需个性化调整，了解以下三个文件即可
 
-    - **推送设置**：在 [config/config.yaml](config/config.yaml) 中配置推送模式和通知选项 → [推送模式详解](#3-推送模式详解)
-    - **关键词设置**：在 [config/frequency_words.txt](config/frequency_words.txt) 中添加你关心的关键词 → [关键词配置教程](#2-关键词配置)
-    - **推送频率调整**：在 [.github/workflows/crawler.yml](.github/workflows/crawler.yml) 请谨慎调整，别贪心
+    | 文件 | 作用 |
+    |------|------|
+    | `config/config.yaml` | 主配置文件：推送模式、时间窗口、平台列表、热点权重等 |
+    | `config/frequency_words.txt` | 关键词文件：设置你关心的词汇，筛选推送内容 |
+    | `.github/workflows/crawler.yml` | 执行频率：控制多久运行一次（⚠️ 谨慎修改） |
 
-    **注意**：建议只调整文档中明确说明的配置项,其他选项主要供作者开发时测试使用
+    👉 **详细配置教程**：[配置详解](#配置详解)
 
 5. **🎉 部署成功！分享你的使用体验**
 
@@ -1391,6 +1678,8 @@ frequency_words.txt 文件增加了一个【必须词】功能，使用 + 号
 <summary>👉 点击展开：<strong>自定义监控平台</strong></summary>
 <br>
 
+**配置位置：** `config/config.yaml` 的 `platforms` 部分
+
 本项目的资讯数据来源于 [newsnow](https://github.com/ourongxing/newsnow) ，你可以点击[网站](https://newsnow.busiyi.world/)，点击[更多]，查看是否有你想要的平台。
 
 具体添加可访问 [项目源代码](https://github.com/ourongxing/newsnow/tree/main/server/sources)，根据里面的文件名，在 `config/config.yaml` 文件中修改 `platforms` 配置：
@@ -1405,15 +1694,16 @@ platforms:
     name: "华尔街见闻"
   # 添加更多平台...
 ```
-如果不会看的话，可以有选择的复制他人整理好的部分[平台配置](https://github.com/sansan0/TrendRadar/issues/95)
 
-> 💡 平台不是越多越好，别贪心大量信息，你要进行筛选，否则依然只会被大量信息淹没。
+> 💡 **快捷方式**：如果不会看源代码，可以复制他人整理好的 [平台配置汇总](https://github.com/sansan0/TrendRadar/issues/95)
+
+> ⚠️ **注意**：平台不是越多越好，建议选择 10-15 个核心平台。过多平台会导致信息过载，反而降低使用体验。
 
 </details>
 
 ### 2. 关键词配置
 
-在 `frequency_words.txt` 文件中配置监控的关键词，支持四种语法和词组功能。
+在 `frequency_words.txt` 文件中配置监控的关键词，支持五种语法、区域标记和词组功能。
 
 | 语法类型 | 符号 | 作用 | 示例 | 匹配逻辑 |
 |---------|------|------|------|---------|
@@ -1421,6 +1711,7 @@ platforms:
 | **必须词** | `+` | 限定范围 | `+手机` | 必须同时包含 |
 | **过滤词** | `!` | 排除干扰 | `!广告` | 包含则直接排除 |
 | **数量限制** | `@` | 控制显示数量 | `@10` | 最多显示10条新闻（v3.2.0新增） |
+| **全局过滤** | `[GLOBAL_FILTER]` | 全局排除指定内容 | 见下方示例 | 任何情况下都过滤（v3.5.0新增） |
 
 #### 2.1 基础语法
 
@@ -1429,6 +1720,8 @@ platforms:
 <details>
 <summary>👉 点击展开：<strong>基础语法教程</strong></summary>
 <br>
+
+**配置位置：** `config/frequency_words.txt`
 
 ##### 1. **普通关键词** - 基础匹配
 ```txt
@@ -1464,6 +1757,55 @@ OPPO
 **作用：** 限制该关键词组最多显示的新闻条数
 
 **配置优先级：** `@数字` > 全局配置 > 不限制
+
+##### 5. **全局过滤** `[GLOBAL_FILTER]` - 全局排除指定内容（v3.5.0 新增）
+```txt
+[GLOBAL_FILTER]
+广告
+推广
+营销
+震惊
+标题党
+
+[WORD_GROUPS]
+科技
+AI
+
+华为
+鸿蒙
+!车
+```
+**作用：** 在任何情况下过滤包含指定词的新闻，**优先级最高**
+
+**使用场景：**
+- 过滤低质内容：震惊、标题党、爆料等
+- 过滤营销内容：广告、推广、赞助等
+- 过滤特定主题：娱乐、八卦（根据需求）
+
+**过滤优先级：** 全局过滤 > 词组内过滤(`!`) > 词组匹配
+
+**区域说明：**
+- `[GLOBAL_FILTER]`：全局过滤区，包含的词在任何情况下都会被过滤
+- `[WORD_GROUPS]`：词组区，保持现有语法（`!`、`+`、`@`）
+- 如果不使用区域标记，默认全部作为词组处理（向后兼容）
+
+**匹配示例：**
+```txt
+[GLOBAL_FILTER]
+广告
+
+[WORD_GROUPS]
+科技
+AI
+```
+- ❌ "广告：最新科技产品发布" ← 包含全局过滤词"广告"，直接拒绝
+- ✅ "科技公司发布AI新产品" ← 不包含全局过滤词，匹配"科技"词组
+- ✅ "AI技术突破引发关注" ← 不包含全局过滤词，匹配"科技"词组中的"AI"
+
+**注意事项：**
+- 全局过滤词应谨慎使用，避免过度过滤导致遗漏有价值内容
+- 建议全局过滤词控制在 5-15 个以内
+- 对于特定词组的过滤，优先使用词组内过滤词（`!` 前缀）
 
 ---
 
@@ -1650,6 +1992,15 @@ report:
 <summary>👉 点击展开：<strong>三种推送模式详细对比</strong></summary>
 <br>
 
+**配置位置：** `config/config.yaml` 的 `report.mode`
+
+```yaml
+report:
+  mode: "daily"  # 可选: "daily" | "incremental" | "current"
+```
+
+**Docker 环境变量：** `REPORT_MODE=incremental`
+
 #### 详细对比表格
 
 | 模式 | 适用人群 | 推送时机 | 显示内容 | 典型使用场景 |
@@ -1702,6 +2053,15 @@ report:
 <details>
 <summary>👉 点击展开：<strong>热点权重调整</strong></summary>
 <br>
+
+**配置位置：** `config/config.yaml` 的 `weight` 部分
+
+```yaml
+weight:
+  rank_weight: 0.6       # 排名权重
+  frequency_weight: 0.3  # 频次权重
+  hotness_weight: 0.1    # 热度权重
+```
 
 当前默认的配置是平衡性配置
 
@@ -1800,50 +2160,33 @@ weight:
 <summary>👉 点击展开：<strong>Docker 部署完整指南</strong></summary>
 <br>
 
-#### 方式一：快速体验（一行命令）
+**镜像说明：**
 
-**Linux/macOS 系统：**
-```bash
-# 创建配置目录并下载配置文件
-mkdir -p config output
-wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/config/config.yaml -P config/
-wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/config/frequency_words.txt -P config/
-```
-或者**手动创建**：
-1. 在当前目录创建 `config` 文件夹
-2. 下载配置文件：
-   - 访问 https://raw.githubusercontent.com/sansan0/TrendRadar/master/config/config.yaml → 右键"另存为" → 保存到 `config\config.yaml`
-   - 访问 https://raw.githubusercontent.com/sansan0/TrendRadar/master/config/frequency_words.txt → 右键"另存为" → 保存到 `config\frequency_words.txt`
+TrendRadar 提供两个独立的 Docker 镜像，可根据需求选择部署：
 
-完成后的目录结构应该是：
-```
-当前目录/
-└── config/
-    ├── config.yaml
-    └── frequency_words.txt
-```
+| 镜像名称 | 用途 | 说明 |
+|---------|------|------|
+| `wantcat/trendradar` | 新闻推送服务 | 定时抓取新闻、推送通知（必选） |
+| `wantcat/trendradar-mcp` | AI 分析服务 | MCP 协议支持、AI 对话分析（可选） |
 
-```bash
-docker run -d --name trend-radar \
-  -v ./config:/app/config:ro \
-  -v ./output:/app/output \
-  -e FEISHU_WEBHOOK_URL="你的飞书webhook" \
-  -e DINGTALK_WEBHOOK_URL="你的钉钉webhook" \
-  -e WEWORK_WEBHOOK_URL="你的企业微信webhook" \
-  -e TELEGRAM_BOT_TOKEN="你的telegram_bot_token" \
-  -e TELEGRAM_CHAT_ID="你的telegram_chat_id" \
-  -e EMAIL_FROM="你的发件邮箱" \
-  -e EMAIL_PASSWORD="你的邮箱密码或授权码" \
-  -e EMAIL_TO="收件人邮箱" \
-  -e CRON_SCHEDULE="*/30 * * * *" \
-  -e RUN_MODE="cron" \
-  -e IMMEDIATE_RUN="true" \
-  wantcat/trendradar:latest
-```
+> 💡 **建议**：
+> - 只需要推送功能：仅部署 `wantcat/trendradar` 镜像
+> - 需要 AI 分析功能：同时部署两个镜像
 
-#### 方式二：使用 docker-compose（推荐）
+---
+
+#### 方式一：使用 docker compose（推荐）
 
 1. **创建项目目录和配置**:
+
+   **方式 1-A：使用 git clone（推荐，最简单）**
+   ```bash
+   # 克隆项目到本地
+   git clone https://github.com/sansan0/TrendRadar.git
+   cd TrendRadar
+   ```
+
+   **方式 1-B：使用 wget 下载配置文件**
    ```bash
    # 创建目录结构
    mkdir -p trendradar/{config,docker}
@@ -1853,12 +2196,12 @@ docker run -d --name trend-radar \
    wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/config/config.yaml -P config/
    wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/config/frequency_words.txt -P config/
 
-   # 下载 docker-compose 配置
-   wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/docker/.env
-   wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/docker/docker-compose.yml
+   # 下载 docker compose 配置
+   wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/docker/.env  -P docker/
+   wget https://raw.githubusercontent.com/sansan0/TrendRadar/master/docker/docker-compose.yml  -P docker/
    ```
 
-完成后的目录结构应该是：
+   > 💡 **说明**：Docker 部署需要的关键目录结构如下：
 ```
 当前目录/
 ├── config/
@@ -1883,36 +2226,69 @@ docker run -d --name trend-radar \
    | `ENABLE_CRAWLER` | `crawler.enable_crawler` | `true` / `false` | 是否启用爬虫 |
    | `ENABLE_NOTIFICATION` | `notification.enable_notification` | `true` / `false` | 是否启用通知 |
    | `REPORT_MODE` | `report.mode` | `daily` / `incremental` / `current`| 报告模式 |
+   | `MAX_ACCOUNTS_PER_CHANNEL` | `notification.max_accounts_per_channel` | `3` | 每个渠道最大账号数 |
    | `PUSH_WINDOW_ENABLED` | `notification.push_window.enabled` | `true` / `false` | 推送时间窗口开关 |
    | `PUSH_WINDOW_START` | `notification.push_window.time_range.start` | `08:00` | 推送开始时间 |
    | `PUSH_WINDOW_END` | `notification.push_window.time_range.end` | `22:00` | 推送结束时间 |
-   | `FEISHU_WEBHOOK_URL` | `notification.webhooks.feishu_url` | `https://...` | 飞书 Webhook |
+   | `ENABLE_WEBSERVER` | - | `true` / `false` | 是否自动启动 Web 服务器 |
+   | `WEBSERVER_PORT` | - | `8080` | Web 服务器端口（默认 8080） |
+   | `FEISHU_WEBHOOK_URL` | `notification.webhooks.feishu_url` | `https://...` | 飞书 Webhook（支持多账号，用 `;` 分隔） |
 
    **配置优先级**：环境变量 > config.yaml
 
    **使用方法**：
    - 修改 `.env` 文件，取消注释并填写需要的配置
    - 或在 NAS/群晖 Docker 管理界面的"环境变量"中直接添加
-   - 重启容器后生效：`docker-compose restart`
+   - 重启容器后生效：`docker compose up -d`
 
 
 3. **启动服务**:
+
+   **选项 A：启动所有服务（推送 + AI 分析）**
    ```bash
-   # 拉取最新镜像并启动
-   docker-compose pull
-   docker-compose up -d
+   # 拉取最新镜像
+   docker compose pull
+
+   # 启动所有服务（trend-radar + trend-radar-mcp）
+   docker compose up -d
    ```
+
+   **选项 B：仅启动新闻推送服务**
+   ```bash
+   # 只启动 trend-radar（定时抓取和推送）
+   docker compose pull trend-radar
+   docker compose up -d trend-radar
+   ```
+
+   **选项 C：仅启动 MCP AI 分析服务**
+   ```bash
+   # 只启动 trend-radar-mcp（提供 AI 分析接口）
+   docker compose pull trend-radar-mcp
+   docker compose up -d trend-radar-mcp
+   ```
+
+   > 💡 **提示**：
+   > - 大多数用户只需启动 `trend-radar` 即可实现新闻推送功能
+   > - 只有需要使用 Claude/ChatGPT 进行 AI 对话分析时，才需启动 `trend-radar-mcp`
+   > - 两个服务相互独立，可根据需求灵活组合
 
 4. **查看运行状态**:
    ```bash
-   # 查看日志
+   # 查看新闻推送服务日志
    docker logs -f trend-radar
 
-   # 查看容器状态
+   # 查看 MCP AI 分析服务日志
+   docker logs -f trend-radar-mcp
+
+   # 查看所有容器状态
    docker ps | grep trend-radar
+
+   # 停止特定服务
+   docker compose stop trend-radar      # 停止推送服务
+   docker compose stop trend-radar-mcp  # 停止 MCP 服务
    ```
 
-#### 方式三：本地构建（开发者选项）
+#### 方式二：本地构建（开发者选项）
 
 如果需要自定义修改代码或构建自己的镜像：
 
@@ -1925,27 +2301,55 @@ cd TrendRadar
 vim config/config.yaml
 vim config/frequency_words.txt
 
-# 使用构建版本的 docker-compose
+# 使用构建版本的 docker compose
 cd docker
 cp docker-compose-build.yml docker-compose.yml
-
-# 构建并启动
-docker-compose build
-docker-compose up -d
 ```
+
+**构建并启动服务**：
+
+```bash
+# 选项 A：构建并启动所有服务
+docker compose build
+docker compose up -d
+
+# 选项 B：仅构建并启动新闻推送服务
+docker compose build trend-radar
+docker compose up -d trend-radar
+
+# 选项 C：仅构建并启动 MCP AI 分析服务
+docker compose build trend-radar-mcp
+docker compose up -d trend-radar-mcp
+```
+
+> 💡 **架构参数说明**：
+> - 默认构建 `amd64` 架构镜像（适用于大多数 x86_64 服务器）
+> - 如需构建 `arm64` 架构（Apple Silicon、树莓派等），设置环境变量：
+>   ```bash
+>   export DOCKER_ARCH=arm64
+>   docker compose build
+>   ```
 
 #### 镜像更新
 
 ```bash
-# 方式一：手动更新
+# 方式一：手动更新（爬虫 + MCP 镜像）
 docker pull wantcat/trendradar:latest
-docker-compose down
-docker-compose up -d
+docker pull wantcat/trendradar-mcp:latest
+docker compose down
+docker compose up -d
 
-# 方式二：使用 docker-compose 更新
-docker-compose pull
-docker-compose up -d
+# 方式二：使用 docker compose 更新
+docker compose pull
+docker compose up -d
 ```
+
+**可用镜像**：
+
+| 镜像名称 | 用途 | 说明 |
+|---------|------|------|
+| `wantcat/trendradar` | 新闻推送服务 | 定时抓取新闻、推送通知 |
+| `wantcat/trendradar-mcp` | MCP 服务 | AI 分析功能（可选） |
 
 #### 服务管理命令
 
@@ -1965,6 +2369,11 @@ docker exec -it trend-radar python manage.py config
 # 显示输出文件
 docker exec -it trend-radar python manage.py files
 
+# Web 服务器管理（用于浏览器访问生成的报告）
+docker exec -it trend-radar python manage.py start_webserver   # 启动 Web 服务器
+docker exec -it trend-radar python manage.py stop_webserver    # 停止 Web 服务器
+docker exec -it trend-radar python manage.py webserver_status  # 查看 Web 服务器状态
+
 # 查看帮助信息
 docker exec -it trend-radar python manage.py help
 
@@ -1978,9 +2387,51 @@ docker stop trend-radar
 docker rm trend-radar
 ```
 
+> 💡 **Web 服务器说明**：
+> - 启动后可通过浏览器访问 `http://localhost:8080` 查看最新报告
+> - 通过目录导航访问历史报告（如：`http://localhost:8080/2025-xx-xx/`）
+> - 端口可在 `.env` 文件中配置 `WEBSERVER_PORT` 参数
+> - 自动启动：在 `.env` 中设置 `ENABLE_WEBSERVER=true`
+> - 安全提示：仅提供静态文件访问，限制在 output 目录，只绑定本地访问
+
 #### 数据持久化
 
 生成的报告和数据默认保存在 `./output` 目录下，即使容器重启或删除，数据也会保留。
+
+**📊 网页版报告访问路径**：
+
+TrendRadar 生成的当日汇总 HTML 报告会同时保存到两个位置：
+
+| 文件位置 | 访问方式 | 适用场景 |
+|---------|---------|---------|
+| `output/index.html` | 宿主机直接访问 | **Docker 部署**（通过 Volume 挂载，宿主机可见） |
+| `index.html` | 根目录访问 | **GitHub Pages**（仓库根目录，Pages 自动识别） |
+| `output/YYYY-MM-DD/html/当日汇总.html` | 历史报告访问 | 所有环境（按日期归档） |
+
+**本地访问示例**：
+```bash
+# 方式 1：通过 Web 服务器访问（推荐，Docker 环境）
+# 1. 启动 Web 服务器
+docker exec -it trend-radar python manage.py start_webserver
+# 2. 在浏览器访问
+http://localhost:8080                           # 访问最新报告（默认 index.html）
+http://localhost:8080/2025-xx-xx/               # 访问指定日期的报告
+http://localhost:8080/2025-xx-xx/html/          # 浏览该日期下的所有 HTML 文件
+
+# 方式 2：直接打开文件（本地环境）
+open ./output/index.html             # macOS
+start ./output/index.html            # Windows
+xdg-open ./output/index.html         # Linux
+
+# 方式 3：访问历史归档
+open ./output/2025-xx-xx/html/当日汇总.html
+```
+
+**为什么有两个 index.html？**
+- `output/index.html`：Docker Volume 挂载到宿主机，本地可直接打开
+- `index.html`：GitHub Actions 推送到仓库，GitHub Pages 自动部署
+
+> 💡 **提示**：两个文件内容完全相同，选择任意一个访问即可。
 
 #### 故障排查
 
@@ -1997,6 +2448,639 @@ docker exec -it trend-radar /bin/bash
 # 验证配置文件
 docker exec -it trend-radar ls -la /app/config/
 ```
+
+#### MCP 服务部署（AI 分析功能）
+
+如果需要使用 AI 分析功能，可以部署独立的 MCP 服务容器。
+
+**架构说明**：
+
+```mermaid
+flowchart TB
+    subgraph trend-radar["trend-radar"]
+        A1[定时抓取新闻]
+        A2[推送通知]
+    end
+    
+    subgraph trend-radar-mcp["trend-radar-mcp"]
+        B1[127.0.0.1:3333]
+        B2[AI 分析接口]
+    end
+    
+    subgraph shared["共享卷"]
+        C1["config/ (ro)"]
+        C2["output/ (ro)"]
+    end
+    
+    trend-radar --> shared
+    trend-radar-mcp --> shared
+```
+
+**快速启动**：
+
+如果已按照 [方式一：使用 docker compose](#方式一使用-docker-compose推荐) 完成部署，只需启动 MCP 服务：
+
+```bash
+cd TrendRadar/docker
+docker compose up -d trend-radar-mcp
+
+# 查看运行状态
+docker ps | grep trend-radar-mcp
+```
+
+**单独启动 MCP 服务**（不使用 docker compose）：
+
+```bash
+# Linux/Mac
+docker run -d --name trend-radar-mcp \
+  -p 127.0.0.1:3333:3333 \
+  -v $(pwd)/config:/app/config:ro \
+  -v $(pwd)/output:/app/output:ro \
+  -e TZ=Asia/Shanghai \
+  wantcat/trendradar-mcp:latest
+
+# Windows PowerShell
+docker run -d --name trend-radar-mcp `
+  -p 127.0.0.1:3333:3333 `
+  -v ${PWD}/config:/app/config:ro `
+  -v ${PWD}/output:/app/output:ro `
+  -e TZ=Asia/Shanghai `
+  wantcat/trendradar-mcp:latest
+```
+
+> ⚠️ **注意**：单独运行时，确保当前目录下有 `config/` 和 `output/` 文件夹，且包含配置文件和新闻数据。
+
+**验证服务**：
+
+```bash
+# 检查 MCP 服务健康状态
+curl http://127.0.0.1:3333/mcp
+
+# 查看 MCP 服务日志
+docker logs -f trend-radar-mcp
+```
+
+**在 AI 客户端中配置**：
+
+MCP 服务启动后，根据不同客户端进行配置：
+
+**Cherry Studio**（推荐，GUI 配置）：
+- 设置 → MCP 服务器 → 添加
+- 类型：`streamableHttp`
+- URL：`http://127.0.0.1:3333/mcp`
+
+**Claude Desktop / Cline**（JSON 配置）：
+```json
+{
+  "mcpServers": {
+    "trendradar": {
+      "url": "http://127.0.0.1:3333/mcp",
+      "type": "streamableHttp"
+    }
+  }
+}
+```
+
+> 💡 **提示**：MCP 服务仅监听本地端口（127.0.0.1），确保安全性。如需远程访问，请自行配置反向代理和认证。
+
+</details>
+
+### 7. 报告配置
+
+<details>
+<summary>👉 点击展开：<strong>报告相关参数配置</strong></summary>
+<br>
+
+**配置位置：** `config/config.yaml` 的 `report` 部分
+
+```yaml
+report:
+  mode: "daily"                    # 推送模式
+  rank_threshold: 5                # 排名高亮阈值
+  sort_by_position_first: false    # 排序优先级
+  max_news_per_keyword: 0          # 每个关键词最大显示数量
+  reverse_content_order: false     # 内容顺序配置
+```
+
+#### 配置项详解
+
+| 配置项 | 类型 | 默认值 | 说明 |
+|-------|------|-------|------|
+| `mode` | string | `daily` | 推送模式，可选 `daily`/`incremental`/`current`，详见 [推送模式详解](#3-推送模式详解) |
+| `rank_threshold` | int | `5` | 排名高亮阈值，排名 ≤ 该值的新闻会加粗显示 |
+| `sort_by_position_first` | bool | `false` | 排序优先级：`false`=按热点条数排序，`true`=按配置位置排序 |
+| `max_news_per_keyword` | int | `0` | 每个关键词最大显示数量，`0`=不限制 |
+| `reverse_content_order` | bool | `false` | 内容顺序：`false`=热点词汇统计在前，`true`=新增热点新闻在前 |
+
+#### 内容顺序配置（v3.5.0 新增）
+
+控制推送消息和 HTML 报告中两部分内容的显示顺序：
+
+| 配置值 | 显示顺序 |
+|-------|---------|
+| `false`（默认） | ① 热点词汇统计 → ② 新增热点新闻 |
+| `true` | ① 新增热点新闻 → ② 热点词汇统计 |
+
+**适用场景：**
+- `false`（默认）：适合关注关键词匹配结果的用户，先看分类统计
+- `true`：适合关注最新动态的用户，优先查看新增热点
+
+**Docker 环境变量：**
+```bash
+REVERSE_CONTENT_ORDER=true
+```
+
+#### 排序优先级配置
+
+**示例场景：** 配置顺序 A、B、C，热点数 A(3条)、B(10条)、C(5条)
+
+| 配置值 | 显示顺序 | 适用场景 |
+|-------|---------|---------|
+| `false`（默认） | B(10条) → C(5条) → A(3条) | 关注热度趋势 |
+| `true` | A(3条) → B(10条) → C(5条) | 关注个人优先级 |
+
+**Docker 环境变量：**
+```bash
+SORT_BY_POSITION_FIRST=true
+MAX_NEWS_PER_KEYWORD=10
+```
+
+</details>
+
+### 8. 推送时间窗口配置
+
+<details>
+<summary>👉 点击展开：<strong>推送时间窗口控制详解</strong></summary>
+<br>
+
+**配置位置：** `config/config.yaml` 的 `notification.push_window` 部分
+
+```yaml
+notification:
+  push_window:
+    enabled: false                    # 是否启用
+    time_range:
+      start: "20:00"                  # 开始时间（北京时间）
+      end: "22:00"                    # 结束时间（北京时间）
+    once_per_day: true                # 每天只推送一次
+```
+
+#### 配置项详解
+
+| 配置项 | 类型 | 默认值 | 说明 |
+|-------|------|-------|------|
+| `enabled` | bool | `false` | 是否启用推送时间窗口控制 |
+| `time_range.start` | string | `"20:00"` | 推送时间窗口开始时间（北京时间，HH:MM 格式） |
+| `time_range.end` | string | `"22:00"` | 推送时间窗口结束时间（北京时间，HH:MM 格式） |
+| `once_per_day` | bool | `true` | `true`=每天在窗口内只推送一次，`false`=窗口内每次执行都推送 |
+
+#### 使用场景
+
+| 场景 | 配置示例 |
+|------|---------|
+| **工作时间推送** | `start: "09:00"`, `end: "18:00"`, `once_per_day: false` |
+| **晚间汇总推送** | `start: "20:00"`, `end: "22:00"`, `once_per_day: true` |
+| **午休时间推送** | `start: "12:00"`, `end: "13:00"`, `once_per_day: true` |
+
+#### 重要提示
+
+> ⚠️ **GitHub Actions 用户注意：**
+> - GitHub Actions 执行时间不稳定，可能有 ±15 分钟的偏差
+> - 时间范围建议至少留足 **2 小时**
+> - 如果想要精准的定时推送，建议使用 **Docker 部署**在个人服务器上
+
+#### Docker 环境变量
+
+```bash
+PUSH_WINDOW_ENABLED=true
+PUSH_WINDOW_START=09:00
+PUSH_WINDOW_END=18:00
+PUSH_WINDOW_ONCE_PER_DAY=false
+```
+
+#### 完整配置示例
+
+**场景：每天晚上 8-10 点只推送一次汇总**
+
+```yaml
+notification:
+  push_window:
+    enabled: true
+    time_range:
+      start: "20:00"
+      end: "22:00"
+    once_per_day: true
+```
+
+**场景：工作时间内每小时推送**
+
+```yaml
+notification:
+  push_window:
+    enabled: true
+    time_range:
+      start: "09:00"
+      end: "18:00"
+    once_per_day: false
+```
+
+</details>
+
+### 9. 执行频率配置
+
+<details>
+<summary>👉 点击展开：<strong>自动运行频率设置</strong></summary>
+<br>
+
+**配置位置：** `.github/workflows/crawler.yml` 的 `schedule` 部分
+
+```yaml
+on:
+  schedule:
+    - cron: "0 * * * *"  # 每小时运行一次
+```
+
+#### 什么是 Cron 表达式？
+
+Cron 是一种定时任务格式，由 5 个部分组成：`分 时 日 月 周`
+
+```
+┌───────────── 分钟 (0-59)
+│ ┌───────────── 小时 (0-23)
+│ │ ┌───────────── 日期 (1-31)
+│ │ │ ┌───────────── 月份 (1-12)
+│ │ │ │ ┌───────────── 星期 (0-6，0=周日)
+│ │ │ │ │
+* * * * *
+```
+
+#### 常用配置示例
+
+| 想要的效果 | Cron 表达式 | 说明 |
+|-----------|------------|------|
+| 每小时运行 | `0 * * * *` | 每小时的第 0 分钟运行（默认） |
+| 每 30 分钟运行 | `*/30 * * * *` | 每隔 30 分钟运行一次 |
+| 每天早 8 点运行 | `0 0 * * *` | UTC 0:00 = 北京时间 8:00 |
+| 工作时间运行 | `*/30 0-14 * * *` | 北京 8:00-22:00，每 30 分钟 |
+| 每天 3 次 | `0 0,6,12 * * *` | 北京 8:00、14:00、20:00 |
+
+#### 重要提示
+
+> ⚠️ **时区注意**：GitHub Actions 使用 **UTC 时间**，北京时间需要 **减 8 小时**
+> - 想要北京时间 8:00 运行 → 设置 UTC 0:00
+> - 想要北京时间 20:00 运行 → 设置 UTC 12:00
+
+> ⚠️ **频率限制**：GitHub 对每个账号的 Actions 运行次数有限额
+> - **建议**：不要设置比 30 分钟更短的间隔
+> - **原因**：过于频繁可能被判定为滥用，面临封号风险
+> - **实际情况**：GitHub Actions 执行时间本身就有偏差，设置太精确意义不大
+
+#### 修改方法
+
+1. 打开你 fork 的仓库
+2. 找到 `.github/workflows/crawler.yml` 文件
+3. 点击编辑（铅笔图标）
+4. 修改 `cron: "0 * * * *"` 中的表达式
+5. 点击 "Commit changes" 保存
+
+</details>
+
+### 10. 多账号推送配置
+
+<details>
+<summary>👉 点击展开：<strong>多账号推送配置详解</strong></summary>
+
+> ### ⚠️ **安全警告**
+> **GitHub Fork 用户请勿在 `config.yaml` 中配置推送信息！**
+>
+> - **风险说明**：`config.yaml` 会被提交到公开的 Git 仓库，配置推送信息（Webhook URL、Token 等）会泄露敏感数据
+> - **推荐方式**：
+>   - **GitHub Actions 用户** → 使用 GitHub Secrets 环境变量
+>   - **Docker 用户** → 使用 [`.env` 文件配置](#6-docker-部署)（`.env` 已在 `.gitignore` 中，不会被提交）
+> - **本地开发用户**：可以在 `config.yaml` 中配置（确保不会 push 到公开仓库）
+
+#### 支持的渠道
+
+| 渠道 | 配置项 | 是否需要配对 | 说明 |
+|------|--------|-------------|------|
+| **飞书** | `feishu_url` | 否 | 多个 webhook URL |
+| **钉钉** | `dingtalk_url` | 否 | 多个 webhook URL |
+| **企业微信** | `wework_url` | 否 | 多个 webhook URL |
+| **Telegram** | `telegram_bot_token` + `telegram_chat_id` | ✅ 是 | token 和 chat_id 数量必须一致 |
+| **ntfy** | `ntfy_topic` + `ntfy_token` | ✅ 是 | topic 和 token 数量必须一致（token 可选） |
+| **Bark** | `bark_url` | 否 | 多个推送 URL |
+| **Slack** | `slack_webhook_url` | 否 | 多个 webhook URL |
+| **邮件** | `email_to` | - | 已支持多收件人（逗号分隔），无需修改 |
+
+#### 推荐配置方式 1：GitHub Actions 环境变量
+
+**配置位置**：GitHub Repo → Settings → Secrets and variables → Actions → Repository secrets
+
+**基础配置示例**：
+```bash
+# 多账号数量限制
+MAX_ACCOUNTS_PER_CHANNEL=3
+
+# 飞书多账号（3个群组）
+FEISHU_WEBHOOK_URL=https://hook1.feishu.cn/xxx;https://hook2.feishu.cn/yyy;https://hook3.feishu.cn/zzz
+
+# 钉钉多账号（2个群组）
+DINGTALK_WEBHOOK_URL=https://oapi.dingtalk.com/xxx;https://oapi.dingtalk.com/yyy
+
+# 企业微信多账号（2个群组）
+WEWORK_WEBHOOK_URL=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx;https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=yyy
+
+# Bark多账号（2个设备）
+BARK_URL=https://api.day.app/key1;https://api.day.app/key2
+
+# Slack多账号（2个频道）
+SLACK_WEBHOOK_URL=https://hooks.slack.com/xxx;https://hooks.slack.com/yyy
+```
+
+**配对配置示例（Telegram 和 ntfy）**：
+
+<details>
+<summary><strong>Telegram 配对配置</strong></summary>
+
+```bash
+# ✅ 正确配置：2个token对应2个chat_id
+TELEGRAM_BOT_TOKEN=123456:AAA-BBB;789012:CCC-DDD
+TELEGRAM_CHAT_ID=-100111;-100222
+
+# ❌ 错误配置：数量不一致，将跳过推送
+TELEGRAM_BOT_TOKEN=token1;token2;token3
+TELEGRAM_CHAT_ID=id1;id2
+```
+
+**说明**：`token` 和 `chat_id` 的数量必须完全一致，否则该渠道推送会被跳过。
+
+</details>
+
+<details>
+<summary><strong>ntfy 配对配置</strong></summary>
+
+```bash
+# ✅ 正确配置：3个topic，只有第2个需要token
+NTFY_TOPIC=topic1;topic2;topic3
+NTFY_TOKEN=;token_for_topic2;
+
+# ✅ 正确配置：2个topic都需要token
+NTFY_TOPIC=topic1;topic2
+NTFY_TOKEN=token1;token2
+
+# ❌ 错误配置：topic和token数量不匹配
+NTFY_TOPIC=topic1;topic2
+NTFY_TOKEN=token1;token2;token3
+```
+
+**说明**：
+- 如果某个 topic 不需要 token，在对应位置留空（两个分号之间）
+- `topic` 和 `token` 的数量必须一致
+
+</details>
+
+---
+
+#### 推荐配置方式 2：Docker 环境变量（.env）
+
+**配置位置**：项目根目录 `docker/.env` 文件
+
+**基础配置示例**：
+```bash
+# 多账号数量限制
+MAX_ACCOUNTS_PER_CHANNEL=3
+
+# 飞书多账号（3个群组）
+FEISHU_WEBHOOK_URL=https://hook1.feishu.cn/xxx;https://hook2.feishu.cn/yyy;https://hook3.feishu.cn/zzz
+
+# 钉钉多账号（2个群组）
+DINGTALK_WEBHOOK_URL=https://oapi.dingtalk.com/xxx;https://oapi.dingtalk.com/yyy
+
+# 企业微信多账号（2个群组）
+WEWORK_WEBHOOK_URL=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx;https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=yyy
+
+# Bark多账号（2个设备）
+BARK_URL=https://api.day.app/key1;https://api.day.app/key2
+
+# Slack多账号（2个频道）
+SLACK_WEBHOOK_URL=https://hooks.slack.com/xxx;https://hooks.slack.com/yyy
+```
+
+**配对配置示例（Telegram 和 ntfy）**：
+
+<details>
+<summary><strong>Telegram 配对配置</strong></summary>
+
+```bash
+# ✅ 正确配置：2个token对应2个chat_id
+TELEGRAM_BOT_TOKEN=123456:AAA-BBB;789012:CCC-DDD
+TELEGRAM_CHAT_ID=-100111;-100222
+
+# ❌ 错误配置：数量不一致，将跳过推送
+TELEGRAM_BOT_TOKEN=token1;token2;token3
+TELEGRAM_CHAT_ID=id1;id2
+```
+
+**说明**：`token` 和 `chat_id` 的数量必须完全一致，否则该渠道推送会被跳过。
+
+</details>
+
+<details>
+<summary><strong>ntfy 配对配置</strong></summary>
+
+```bash
+# ✅ 正确配置：3个topic，只有第2个需要token
+NTFY_TOPIC=topic1;topic2;topic3
+NTFY_TOKEN=;token_for_topic2;
+
+# ✅ 正确配置：2个topic都需要token
+NTFY_TOPIC=topic1;topic2
+NTFY_TOKEN=token1;token2
+
+# ❌ 错误配置：topic和token数量不匹配
+NTFY_TOPIC=topic1;topic2
+NTFY_TOKEN=token1;token2;token3
+```
+
+**说明**：
+- 如果某个 topic 不需要 token，在对应位置留空（两个分号之间）
+- `topic` 和 `token` 的数量必须一致
+
+</details>
+
+---
+
+#### 推送行为说明
+
+1. **独立推送**：每个账号独立发送，一个失败不影响其他账号
+2. **部分成功判定**：只要有一个账号发送成功，整体视为成功
+3. **日志区分**：多账号时日志会显示"账号1"、"账号2"等标签
+4. **批次间隔**：多账号会增加总发送时间（每个账号独立计算批次间隔）
+
+---
+
+#### 常见问题
+
+<details>
+<summary><strong>Q1: 超过 3 个账号会怎样？</strong></summary>
+<br>
+
+系统会自动截断到配置的最大数量，并输出警告日志。可通过 `max_accounts_per_channel` 调整限制。
+
+**⚠️ GitHub Actions 用户特别注意**：
+- **不建议配置过多账号**（建议不超过 3 个），可能导致：
+  - **触发 GitHub Actions 速率限制**：频繁的网络请求可能被识别为异常行为
+  - **潜在账号风险**：过度使用 GitHub Actions 资源可能影响账号状态
+
+</details>
+
+<details>
+<summary><strong>Q2: 多账号会影响推送速度吗？</strong></summary>
+<br>
+
+会。每个账号独立发送，总时间 = 账号数 × 单账号发送时间。建议控制账号数量。
+
+</details>
+
+<details>
+<summary><strong>Q3: 本地开发用户如何在 config.yaml 中配置？</strong></summary>
+<br>
+
+如果你是本地开发且**不会将代码推送到公开仓库**，可以直接在 `config/config.yaml` 中配置：
+
+```yaml
+notification:
+  enable_notification: true
+  max_accounts_per_channel: 3
+
+  webhooks:
+    feishu_url: "https://hook1.feishu.cn/xxx;https://hook2.feishu.cn/yyy"
+    telegram_bot_token: "token1;token2"
+    telegram_chat_id: "id1;id2"
+```
+
+**⚠️ 重要提醒**：
+- 确保 `config/config.yaml` 在 `.gitignore` 中（如果会提交代码）
+- 或者只在本地开发环境使用，**绝不提交到公开仓库**
+
+</details>
+
+</details>
+
+### 11. 存储配置
+
+<details id="storage-config">
+<summary>👉 点击展开：<strong>存储架构配置详解</strong></summary>
+<br>
+
+#### 存储后端选择
+
+**配置位置**：`config/config.yaml` 的 `storage` 部分
+
+v4.0.0 版本重构了存储架构，支持多种存储后端：
+
+```yaml
+storage:
+  backend: auto  # 存储后端：auto（自动选择）/ local（本地SQLite）/ remote（远程云存储）
+
+  formats:
+    sqlite: true   # 是否启用SQLite存储
+    txt: true      # 是否生成TXT快照
+    html: true     # 是否生成HTML报告
+
+  local:
+    data_dir: "output"    # 本地存储目录
+    retention_days: 0     # 本地数据保留天数，0表示永久保留
+
+  remote:
+    endpoint_url: ""      # S3 API 端点
+    bucket_name: ""       # 存储桶名称
+    access_key_id: ""     # 访问密钥ID
+    secret_access_key: "" # 访问密钥
+    region: ""            # 区域（可选）
+    retention_days: 0     # 远程数据保留天数，0表示永久保留
+
+  pull:
+    enabled: false        # 是否启用启动时从远程拉取数据
+    days: 7               # 拉取最近N天的数据
+```
+
+#### 后端选择策略
+
+| backend 值 | 说明 | 适用场景 |
+|-----------|------|---------|
+| `auto` | **自动选择**（推荐） | 根据运行环境智能选择：<br>• GitHub Actions → Remote<br>• Docker/本地 → Local |
+| `local` | 本地 SQLite 数据库 | Docker 部署、本地开发 |
+| `remote` | 远程云存储（S3 兼容，如 Cloudflare R2） | GitHub Actions、多机器同步 |
+
+
+#### 远程云存储配置
+
+**环境变量**（推荐方式）：
+
+```bash
+# GitHub Actions / Docker 环境变量
+STORAGE_BACKEND=remote  # 或 auto
+
+# 本地/远程数据保留天数（0 表示永久保留）
+LOCAL_RETENTION_DAYS=0
+REMOTE_RETENTION_DAYS=0
+
+# S3 兼容存储配置（以 Cloudflare R2 为例）
+S3_BUCKET_NAME=your-bucket-name
+S3_ACCESS_KEY_ID=your-access-key-id
+S3_SECRET_ACCESS_KEY=your-secret-access-key
+S3_ENDPOINT_URL=https://<account-id>.r2.cloudflarestorage.com
+S3_REGION=auto
+
+# 数据拉取配置（可选，从远程同步到本地）
+PULL_ENABLED=false
+PULL_DAYS=7
+```
+
+**获取凭据**：参见 [快速开始 - 远程存储配置](#-快速开始)
+
+#### 数据清理策略
+
+**自动清理**：每次运行结束时检查并删除超过保留天数的数据。
+
+```yaml
+storage:
+  local:
+    retention_days: 30  # 本地保留最近30天数据
+  remote:
+    retention_days: 30  # 远程保留最近30天数据
+```
+
+**清理逻辑**：
+- 本地存储：删除过期日期的文件夹（如 `output/2025-11-10/`）
+- 远程存储：批量删除过期的云端对象（如 `news/2025-11-10.db`）
+
+#### 时区配置（v4.0.0 新增）
+
+**全球时区支持**：解决非中国用户推送时间窗口问题。
+
+```yaml
+app:
+  timezone: "Asia/Shanghai"  # 默认中国时区
+  # 其他示例：
+  # timezone: "America/Los_Angeles"  # 美西时间
+  # timezone: "Europe/London"        # 英国时间
+```
+
+**支持所有 IANA 时区名称**：[时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+
+#### 不兼容变更
+
+⚠️ **v4.0.0 不兼容 v3.x 数据**：
+
+1. 数据库结构完全重构，无法读取旧数据
+2. 文件路径格式变更（ISO 格式）
+
+**迁移建议**：
+- 从 v4.0.0 开始重新收集数据
+- 旧数据如需保留，请手动重命名目录格式（不推荐）
 
 </details>
 
@@ -2017,7 +3101,7 @@ AI 分析功能**不是**直接查询网络实时数据，而是分析你**本�
 
 #### 使用说明：
 
-1. **项目自带测试数据**：`output` 目录默认包含 **2025年11月1日～11月15日** 的新闻数据，可用于快速体验 AI 功能
+1. **项目自带测试数据**：`output` 目录默认包含 **2025-11-01～2025-11-15** 的新闻数据，可用于快速体验 AI 功能
 
 2. **查询限制**：
    - ✅ 只能查询已有日期范围内的数据（11月1-15日）
